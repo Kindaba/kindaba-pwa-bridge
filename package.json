@@ -1,0 +1,18 @@
+{
+  "name": "react-native-pwa-bridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "out/wrapper.js",
+  "scripts": {
+    "babel": "babel src/wrapper.js --out-file out/wrapper.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/preset-env": "^7.0.0"
+  }
+}
