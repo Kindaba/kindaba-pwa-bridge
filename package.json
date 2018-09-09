@@ -1,9 +1,10 @@
 {
   "name": "kindaba-pwa-bridge",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "",
   "main": "out/bridge.js",
   "scripts": {
+    "precommit": "npm run babel && git add out/bridge.js",
     "babel": "babel src/bridge.js --out-file out/bridge.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +14,7 @@
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/preset-env": "^7.0.0"
+    "@babel/preset-env": "^7.0.0",
+    "husky": "^0.14.3"
   }
 }
