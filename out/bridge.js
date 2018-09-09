@@ -9,6 +9,13 @@ var validateWebView = function validateWebView(webview) {
     throw new Error('Webview should be setup to use React Native Wrapper from RN side.');
   }
 };
+/**
+ * (PWA) sends a message to React Native
+ * 
+ * @param { string } event a string for the event. It is what is used to match the event handler on the other React Native side.
+ * @param { object } data any extra data or options to be passed to the React Native side 
+ */
+
 
 var sendToReactNative = function sendToReactNative(event) {
   var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -18,6 +25,13 @@ var sendToReactNative = function sendToReactNative(event) {
     data: data
   });
 };
+/**
+ * (PWA) Registers to events coming from React Native. It augments the functionality
+ * by (trying to) parse the message into JSON for convenience
+ * 
+ * @param {Function} func function to be called when the event is triggered from the React Native side
+ */
+
 
 var listenToReactNative = function listenToReactNative(func) {
   if (!isReactNative()) return;
@@ -36,6 +50,11 @@ var listenToReactNative = function listenToReactNative(func) {
     }
   };
 };
+/**
+ * (PWA) to unregister from listening to messages from React Native
+ * typically add it componentWillUnmount()
+ */
+
 
 var unlistenToReactNative = function unlistenToReactNative() {
   if (!isReactNative()) return;
@@ -46,23 +65,39 @@ var unlistenToReactNative = function unlistenToReactNative() {
 
   delete window.receivedMessageFromReactNative;
 };
-/* helpers methods */
+/**
+ * Alias to sendToReactNative passing Event_Camera_Roll
+ */
 
 
 var openCameraRoll = function openCameraRoll() {
   return sendToReactNative(Event_Camera_Roll);
 };
+/**
+ * Alias to sendToReactNative passing Event_Camera
+ */
+
 
 var openCamera = function openCamera() {
   return sendToReactNative(Event_Camera);
 };
+/**
+ * (PWA) Helper method to check if the PWA is loaded inside React Native or just in a web browser
+ */
+
 
 var isReactNative = function isReactNative() {
   var isReactNative = !!(window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.reactNative);
   console.warn(isReactNative);
   return isReactNative;
 };
-/* helpers methods */
+/**
+ * (React Native) sets up the event handlers on React Native side so that
+ * when a PWA posts a message with { event: "event_name" } then
+ * the function defined here (the one mapped to "event_name") will be triggered
+ * 
+ * @param {hashmap} eventMap map of event names to event handlers
+ */
 
 
 var handleMessages = function handleMessages(eventMap) {
@@ -71,6 +106,16 @@ var handleMessages = function handleMessages(eventMap) {
     return eventMap[event]();
   };
 };
+/**
+ * (React Native) sends some data back to the PWA, for example, after photos 
+ * are selected in a Camera Roll in the native side, those photos can be sent back
+ * to the PWA
+ * 
+ * @param { WKWebView } webview references the webview in React Native 
+ * @param { string } event the event name
+ * @param {*} data the data to send back to the PWA
+ */
+
 
 var sendToWebView = function sendToWebView(webview, event, data) {
   validateWebView(webview);
