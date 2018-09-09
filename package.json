@@ -1,10 +1,10 @@
 {
-  "name": "react-native-pwa-bridge",
+  "name": "kindaba-pwa-bridge",
   "version": "1.0.0",
   "description": "",
-  "main": "out/wrapper.js",
+  "main": "out/bridge.js",
   "scripts": {
-    "babel": "babel src/wrapper.js --out-file out/wrapper.js",
+    "babel": "babel src/bridge.js --out-file out/bridge.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
