@@ -2,7 +2,7 @@
 
 var Event_Camera_Roll = 'cameraRoll';
 var Event_Camera = 'camera';
-var Event_PUSH_NOTIFICATION = 'pushNotifications';
+var Event_Push_Notification = 'pushNotifications';
 
 var validateWebView = function validateWebView(webview) {
   if (!webview) {
@@ -129,7 +129,7 @@ var sendToWebView = function sendToWebView(webview, event, data) {
 module.exports = {
   Event_Camera_Roll: Event_Camera_Roll,
   Event_Camera: Event_Camera,
-  Event_PUSH_NOTIFICATION: Event_PUSH_NOTIFICATION,
+  Event_Push_Notification: Event_Push_Notification,
 
   /* From PWA to React Native */
   sendToReactNative: sendToReactNative,
