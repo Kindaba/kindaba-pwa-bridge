@@ -9,10 +9,13 @@ const validateWebView = (webview) => {
 }
 
 const sendToReactNative = function (event, data = {}) {
+    if (!isReactNative()) return;
     window && window.postMessage({ event, data });
 }
 
 const listenToReactNative = (func) => {
+    if (!isReactNative()) return;
+
     if (!window) {
         throw new Error('Window object not found.')
     }
@@ -30,6 +33,8 @@ const listenToReactNative = (func) => {
 }
 
 const unlistenToReactNative = function () {
+    if (!isReactNative()) return;
+
     if (!window) {
         throw new Error('Window object not found.')
     }
@@ -43,16 +48,18 @@ const openCameraRoll = function () {
 const openCamera = function () {
     return sendToReactNative(Event_Camera)
 }
+
+const isReactNative = () => {
+    const isReactNative = !!(window && window.webkit
+        && window.webkit.messageHandlers
+        && window.webkit.messageHandlers.reactNative)
+
+    console.warn(isReactNative)
+    return isReactNative
+}
 /* helpers methods */
 
 
-
-/**
- * onMessage={RnBridge.handleMessages({
-        [RnBridge.Event_Camera]: this.takePicture,
-        [RnBridge.Event_Camera_Roll]: this.cameraRoll,
-      })}
- */
 const handleMessages = (eventMap) => {
     return (e) => {
         const { event } = e.nativeEvent.data
@@ -75,13 +82,15 @@ module.exports = {
     Event_Camera,
     Event_PUSH_NOTIFICATION,
 
+    /* From PWA to React Native */
     sendToReactNative,
     listenToReactNative,
     unlistenToReactNative,
     openCamera,
     openCameraRoll,
+    isReactNative,
 
-
+    /* From React Native to PWA */
     handleMessages,
     sendToWebView
 }

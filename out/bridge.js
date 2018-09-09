@@ -12,6 +12,7 @@ var validateWebView = function validateWebView(webview) {
 
 var sendToReactNative = function sendToReactNative(event) {
   var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  if (!isReactNative()) return;
   window && window.postMessage({
     event: event,
     data: data
@@ -19,6 +20,8 @@ var sendToReactNative = function sendToReactNative(event) {
 };
 
 var listenToReactNative = function listenToReactNative(func) {
+  if (!isReactNative()) return;
+
   if (!window) {
     throw new Error('Window object not found.');
   }
@@ -35,6 +38,8 @@ var listenToReactNative = function listenToReactNative(func) {
 };
 
 var unlistenToReactNative = function unlistenToReactNative() {
+  if (!isReactNative()) return;
+
   if (!window) {
     throw new Error('Window object not found.');
   }
@@ -51,14 +56,13 @@ var openCameraRoll = function openCameraRoll() {
 var openCamera = function openCamera() {
   return sendToReactNative(Event_Camera);
 };
-/* helpers methods */
 
-/**
- * onMessage={RnBridge.handleMessages({
-        [RnBridge.Event_Camera]: this.takePicture,
-        [RnBridge.Event_Camera_Roll]: this.cameraRoll,
-      })}
- */
+var isReactNative = function isReactNative() {
+  var isReactNative = !!(window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.reactNative);
+  console.warn(isReactNative);
+  return isReactNative;
+};
+/* helpers methods */
 
 
 var handleMessages = function handleMessages(eventMap) {
@@ -81,11 +85,16 @@ module.exports = {
   Event_Camera_Roll: Event_Camera_Roll,
   Event_Camera: Event_Camera,
   Event_PUSH_NOTIFICATION: Event_PUSH_NOTIFICATION,
+
+  /* From PWA to React Native */
   sendToReactNative: sendToReactNative,
   listenToReactNative: listenToReactNative,
   unlistenToReactNative: unlistenToReactNative,
   openCamera: openCamera,
   openCameraRoll: openCameraRoll,
+  isReactNative: isReactNative,
+
+  /* From React Native to PWA */
   handleMessages: handleMessages,
   sendToWebView: sendToWebView
 };

@@ -1,6 +1,6 @@
 {
   "name": "kindaba-pwa-bridge",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "out/bridge.js",
   "scripts": {
