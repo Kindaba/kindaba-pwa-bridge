@@ -103,7 +103,9 @@ var isReactNative = function isReactNative() {
 var handleMessages = function handleMessages(eventMap) {
   return function (e) {
     var event = e.nativeEvent.data.event;
-    return eventMap[event]();
+    if (event) {
+      return eventMap[event]();
+    }
   };
 };
 /**

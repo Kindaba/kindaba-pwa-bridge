@@ -94,7 +94,9 @@ const isReactNative = () => {
 const handleMessages = (eventMap) => {
     return (e) => {
         const { event } = e.nativeEvent.data
-        return eventMap[event]()
+        if (event) {
+            return eventMap[event]()
+        }
     }
 }
 
