@@ -102,10 +102,14 @@ var isReactNative = function isReactNative() {
 
 var handleMessages = function handleMessages(eventMap) {
   return function (e) {
-    var event = e.nativeEvent.data.event;
+    var eventData = JSON.parse(e.nativeEvent.data);
+    var event = eventData.event,
+        data = eventData.data;
 
-    if (event) {
-      return eventMap[event]();
+    if (event && eventMap[event]) {
+      return eventMap[event](data);
+    } else {
+      console.warn("no handler  for event: \"".concat(event, "\""));
     }
   };
 };

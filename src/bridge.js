@@ -25,23 +25,23 @@ const sendToReactNative = function (event, data = {}) {
  * 
  * @param {Function} func function to be called when the event is triggered from the React Native side
  */
-const listenToReactNative = (func) => {
-    if (!isReactNative()) return;
+const listenToReactNative = func => {
+  if (!isReactNative()) return
 
-    if (!window) {
-        throw new Error('Window object not found.')
+  if (!window) {
+    throw new Error('Window object not found.')
+  }
+
+  window.receivedMessageFromReactNative = data => {
+    try {
+      const parsedData = JSON.parse(data)
+
+      func(parsedData)
+    } catch (err) {
+      console.warn(`Data received from React Native is not valid JSON. ${data}`)
+      func(data)
     }
-
-    window.receivedMessageFromReactNative = (data) => {
-        try {
-            const parsedData = JSON.parse(data)
-
-            func(parsedData)
-        } catch (err) {
-            console.warn(`Data received from React Native is not valid JSON. ${data}`)
-            func(data)
-        }
-    }
+  }
 }
 
 /**
@@ -85,7 +85,7 @@ const isReactNative = () => {
     ) || !!window.originalPostMessage
 
   console.warn(`IsReactNative ${isReactNative}`)
-    return isReactNative
+  return isReactNative
 }
 
 /**
@@ -96,12 +96,16 @@ const isReactNative = () => {
  * @param {hashmap} eventMap map of event names to event handlers
  */
 const handleMessages = (eventMap) => {
-    return (e) => {
-        const { event } = e.nativeEvent.data
-        if (event) {
-            return eventMap[event]()
-        }
+  return e => {
+    const eventData = JSON.parse(e.nativeEvent.data)
+    const { event, data } = eventData
+
+    if (event && eventMap[event]) {
+      return eventMap[event](data)
+    } else {
+      console.warn(`no handler  for event: "${event}"`)
     }
+  }
 }
 
 /**
