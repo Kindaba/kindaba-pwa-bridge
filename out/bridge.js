@@ -87,8 +87,8 @@ var openCamera = function openCamera() {
 
 
 var isReactNative = function isReactNative() {
-  var isReactNative = !!(window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.reactNative);
-  console.warn(isReactNative);
+  var isReactNative = !!(window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.reactNative) || !!window.originalPostMessage;
+  console.warn("IsReactNative ".concat(isReactNative));
   return isReactNative;
 };
 /**
@@ -103,6 +103,7 @@ var isReactNative = function isReactNative() {
 var handleMessages = function handleMessages(eventMap) {
   return function (e) {
     var event = e.nativeEvent.data.event;
+
     if (event) {
       return eventMap[event]();
     }
@@ -125,7 +126,8 @@ var sendToWebView = function sendToWebView(webview, event, data) {
     event: event,
     data: data
   });
-  webview.evaluateJavaScript("receivedMessageFromReactNative('".concat(message, "')"));
+  var func = webview.evaluateJavaScript || webview.injectJavaScript;
+  func("receivedMessageFromReactNative('".concat(message, "')"));
 };
 
 module.exports = {

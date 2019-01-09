@@ -76,11 +76,15 @@ const openCamera = function () {
  * (PWA) Helper method to check if the PWA is loaded inside React Native or just in a web browser
  */
 const isReactNative = () => {
-    const isReactNative = !!(window && window.webkit
-        && window.webkit.messageHandlers
-        && window.webkit.messageHandlers.reactNative)
+  const isReactNative =
+    !!(
+      window &&
+      window.webkit &&
+      window.webkit.messageHandlers &&
+      window.webkit.messageHandlers.reactNative
+    ) || !!window.originalPostMessage
 
-    console.warn(isReactNative)
+  console.warn(`IsReactNative ${isReactNative}`)
     return isReactNative
 }
 
@@ -116,7 +120,8 @@ const sendToWebView = (webview, event, data) => {
         event,
         data
     })
-    webview.evaluateJavaScript(`receivedMessageFromReactNative('${message}')`);
+  const func = webview.evaluateJavaScript || webview.injectJavaScript
+  func(`receivedMessageFromReactNative('${message}')`)
 }
 
 module.exports = {
