@@ -20,10 +20,10 @@ var validateWebView = function validateWebView(webview) {
 var sendToReactNative = function sendToReactNative(event) {
   var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   if (!isReactNative()) return;
-  window && window.postMessage({
+  window && window.postMessage(JSON.stringify({
     event: event,
     data: data
-  });
+  }));
 };
 /**
  * (PWA) Registers to events coming from React Native. It augments the functionality
@@ -102,10 +102,14 @@ var isReactNative = function isReactNative() {
 
 var handleMessages = function handleMessages(eventMap) {
   return function (e) {
-    var event = e.nativeEvent.data.event;
+    var eventData = JSON.parse(e.nativeEvent.data);
+    var event = eventData.event,
+        data = eventData.data;
 
-    if (event) {
-      return eventMap[event]();
+    if (event && eventMap[event]) {
+      return eventMap[event](data);
+    } else {
+      console.warn("no handler  for event: \"".concat(event, "\""));
     }
   };
 };
