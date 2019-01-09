@@ -2,46 +2,49 @@ const Event_Camera_Roll = 'cameraRoll'
 const Event_Camera = 'camera'
 const Event_Push_Notification = 'pushNotifications'
 
-const validateWebView = (webview) => {
-    if (!webview) {
-        throw new Error('Webview should be setup to use React Native Wrapper from RN side.')
-    }
+const validateWebView = webview => {
+  if (!webview) {
+    throw new Error(
+      'Webview should be setup to use React Native Wrapper from RN side.'
+    )
+  }
 }
 
 /**
  * (PWA) sends a message to React Native
- * 
+ *
  * @param { string } event a string for the event. It is what is used to match the event handler on the other React Native side.
- * @param { object } data any extra data or options to be passed to the React Native side 
+ * @param { object } data any extra data or options to be passed to the React Native side
  */
 const sendToReactNative = function (event, data = {}) {
-    if (!isReactNative()) return;
-    window && window.postMessage({ event, data });
+  if (!isReactNative()) return
+  window && window.postMessage(JSON.stringify({ event, data }))
 }
 
 /**
  * (PWA) Registers to events coming from React Native. It augments the functionality
  * by (trying to) parse the message into JSON for convenience
- * 
+ *
  * @param {Function} func function to be called when the event is triggered from the React Native side
  */
-const listenToReactNative = (func) => {
-    if (!isReactNative()) return;
+const listenToReactNative = func => {
+  if (!isReactNative()) return
 
-    if (!window) {
-        throw new Error('Window object not found.')
+  if (!window) {
+    throw new Error('Window object not found.')
+  }
+
+  alert('listening to React native')
+  window.receivedMessageFromReactNative = data => {
+    try {
+      const parsedData = JSON.parse(data)
+
+      func(parsedData)
+    } catch (err) {
+      console.warn(`Data received from React Native is not valid JSON. ${data}`)
+      func(data)
     }
-
-    window.receivedMessageFromReactNative = (data) => {
-        try {
-            const parsedData = JSON.parse(data)
-
-            func(parsedData)
-        } catch (err) {
-            console.warn(`Data received from React Native is not valid JSON. ${data}`)
-            func(data)
-        }
-    }
+  }
 }
 
 /**
@@ -49,27 +52,26 @@ const listenToReactNative = (func) => {
  * typically add it componentWillUnmount()
  */
 const unlistenToReactNative = function () {
-    if (!isReactNative()) return;
+  if (!isReactNative()) return
 
-    if (!window) {
-        throw new Error('Window object not found.')
-    }
-    delete window.receivedMessageFromReactNative
+  if (!window) {
+    throw new Error('Window object not found.')
+  }
+  delete window.receivedMessageFromReactNative
 }
-
 
 /**
  * Alias to sendToReactNative passing Event_Camera_Roll
  */
 const openCameraRoll = function () {
-    return sendToReactNative(Event_Camera_Roll)
+  return sendToReactNative(Event_Camera_Roll)
 }
 
 /**
  * Alias to sendToReactNative passing Event_Camera
  */
 const openCamera = function () {
-    return sendToReactNative(Event_Camera)
+  return sendToReactNative(Event_Camera)
 }
 
 /**
@@ -84,60 +86,60 @@ const isReactNative = () => {
       window.webkit.messageHandlers.reactNative
     ) || !!window.originalPostMessage
 
-  console.warn(`IsReactNative ${isReactNative}`)
-    return isReactNative
+  alert(`IsReactNative ${isReactNative}`)
+  return isReactNative
 }
 
 /**
  * (React Native) sets up the event handlers on React Native side so that
  * when a PWA posts a message with { event: "event_name" } then
  * the function defined here (the one mapped to "event_name") will be triggered
- * 
+ *
  * @param {hashmap} eventMap map of event names to event handlers
  */
-const handleMessages = (eventMap) => {
-    return (e) => {
-        const { event } = e.nativeEvent.data
-        if (event) {
-            return eventMap[event]()
-        }
+const handleMessages = eventMap => {
+  return e => {
+    const { event } = e.nativeEvent.data
+    if (event) {
+      return eventMap[event]()
     }
+  }
 }
 
 /**
- * (React Native) sends some data back to the PWA, for example, after photos 
+ * (React Native) sends some data back to the PWA, for example, after photos
  * are selected in a Camera Roll in the native side, those photos can be sent back
  * to the PWA
- * 
- * @param { WKWebView } webview references the webview in React Native 
+ *
+ * @param { WKWebView } webview references the webview in React Native
  * @param { string } event the event name
  * @param {*} data the data to send back to the PWA
  */
 const sendToWebView = (webview, event, data) => {
-    validateWebView(webview)
+  validateWebView(webview)
 
-    const message = JSON.stringify({
-        event,
-        data
-    })
+  const message = JSON.stringify({
+    event,
+    data
+  })
   const func = webview.evaluateJavaScript || webview.injectJavaScript
   func(`receivedMessageFromReactNative('${message}')`)
 }
 
 module.exports = {
-    Event_Camera_Roll,
-    Event_Camera,
-    Event_Push_Notification,
+  Event_Camera_Roll,
+  Event_Camera,
+  Event_Push_Notification,
 
-    /* From PWA to React Native */
-    sendToReactNative,
-    listenToReactNative,
-    unlistenToReactNative,
-    openCamera,
-    openCameraRoll,
-    isReactNative,
+  /* From PWA to React Native */
+  sendToReactNative,
+  listenToReactNative,
+  unlistenToReactNative,
+  openCamera,
+  openCameraRoll,
+  isReactNative,
 
-    /* From React Native to PWA */
-    handleMessages,
-    sendToWebView
+  /* From React Native to PWA */
+  handleMessages,
+  sendToWebView
 }
