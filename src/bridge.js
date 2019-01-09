@@ -16,7 +16,7 @@ const validateWebView = (webview) => {
  */
 const sendToReactNative = function (event, data = {}) {
     if (!isReactNative()) return;
-    window && window.postMessage({ event, data });
+    window && window.postMessage(JSON.stringify({ event, data }));
 }
 
 /**
