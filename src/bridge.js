@@ -99,9 +99,13 @@ const isReactNative = () => {
  */
 const handleMessages = eventMap => {
   return e => {
-    const { event } = e.nativeEvent.data
-    if (event) {
-      return eventMap[event]()
+    const eventData = JSON.parse(e.nativeEvent.data)
+    const { event, data } = eventData
+
+    if (event && eventMap[event]) {
+      return eventMap[event](data)
+    } else {
+      console.warn(`no handler  for event: "${event}"`)
     }
   }
 }
