@@ -10,9 +10,9 @@ const validateWebView = (webview) => {
 
 /**
  * (PWA) sends a message to React Native
- * 
+ *
  * @param { string } event a string for the event. It is what is used to match the event handler on the other React Native side.
- * @param { object } data any extra data or options to be passed to the React Native side 
+ * @param { object } data any extra data or options to be passed to the React Native side
  */
 const sendToReactNative = function (event, data = {}) {
     if (!isReactNative()) return;
@@ -22,7 +22,7 @@ const sendToReactNative = function (event, data = {}) {
 /**
  * (PWA) Registers to events coming from React Native. It augments the functionality
  * by (trying to) parse the message into JSON for convenience
- * 
+ *
  * @param {Function} func function to be called when the event is triggered from the React Native side
  */
 const listenToReactNative = func => {
@@ -92,28 +92,30 @@ const isReactNative = () => {
  * (React Native) sets up the event handlers on React Native side so that
  * when a PWA posts a message with { event: "event_name" } then
  * the function defined here (the one mapped to "event_name") will be triggered
- * 
+ *
  * @param {hashmap} eventMap map of event names to event handlers
  */
 const handleMessages = (eventMap) => {
   return e => {
-    const eventData = JSON.parse(e.nativeEvent.data)
-    const { event, data } = eventData
+    if (e && e.nativeEvent && e.nativeEvent.data) {
+      const eventData = JSON.parse(e.nativeEvent.data)
+      const { event, data } = eventData
 
-    if (event && eventMap[event]) {
-      return eventMap[event](data)
-    } else {
-      console.warn(`no handler  for event: "${event}"`)
+      if (event && eventMap[event]) {
+        return eventMap[event](data)
+      } else {
+        console.warn(`no handler  for event: "${event}"`)
+      }      
     }
   }
 }
 
 /**
- * (React Native) sends some data back to the PWA, for example, after photos 
+ * (React Native) sends some data back to the PWA, for example, after photos
  * are selected in a Camera Roll in the native side, those photos can be sent back
  * to the PWA
- * 
- * @param { WKWebView } webview references the webview in React Native 
+ *
+ * @param { WKWebView } webview references the webview in React Native
  * @param { string } event the event name
  * @param {*} data the data to send back to the PWA
  */
