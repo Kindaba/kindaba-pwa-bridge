@@ -103,7 +103,7 @@ var isReactNative = function isReactNative() {
 var handleMessages = function handleMessages(eventMap) {
   return function (e) {
     if (e && e.nativeEvent && e.nativeEvent.data) {
-      var eventData = JSON.parse(e.nativeEvent.data);
+      var eventData = typeof e.nativeEvent.data === 'string' ? JSON.parse(e.nativeEvent.data) : e.nativeEvent.data;
       var event = eventData.event,
           data = eventData.data;
 

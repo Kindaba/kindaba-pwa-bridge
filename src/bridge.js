@@ -98,14 +98,14 @@ const isReactNative = () => {
 const handleMessages = (eventMap) => {
   return e => {
     if (e && e.nativeEvent && e.nativeEvent.data) {
-      const eventData = JSON.parse(e.nativeEvent.data)
+      const eventData = typeof e.nativeEvent.data === 'string' ? JSON.parse(e.nativeEvent.data): e.nativeEvent.data
       const { event, data } = eventData
 
       if (event && eventMap[event]) {
         return eventMap[event](data)
       } else {
         console.warn(`no handler  for event: "${event}"`)
-      }      
+      }
     }
   }
 }
